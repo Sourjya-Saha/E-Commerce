@@ -14,7 +14,7 @@ const useTheme = () => {
 };
 
 const ThemeProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(() => {
+  const [darkMode, setdarkMode] = useState(() => {
     try {
       const saved = window.localStorage?.getItem('theme');
       return saved ? saved === 'dark' : false;
@@ -25,17 +25,17 @@ const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      window.localStorage?.setItem('theme', isDark ? 'dark' : 'light');
+      window.localStorage?.setItem('theme', darkMode ? 'dark' : 'light');
     } catch {
       // Handle localStorage not available
     }
-  }, [isDark]);
+  }, [darkMode]);
 
-  const toggleTheme = () => setIsDark(!isDark);
+  const toggleTheme = () => setdarkMode(!darkMode);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-      <div className={isDark ? 'dark' : ''}>
+    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
+      <div className={darkMode ? 'dark' : ''}>
         {children}
       </div>
     </ThemeContext.Provider>
@@ -114,7 +114,7 @@ const similarProducts = [
 const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isDark, toggleTheme } = useTheme();
+  const { darkMode, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -127,10 +127,10 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
       isScrolled 
-        ? isDark 
+        ? darkMode 
           ? 'bg-gray-900/95 backdrop-blur-xl shadow-2xl border-b border-gray-800' 
           : 'bg-white/95 backdrop-blur-xl shadow-2xl border-b border-blue-100'
-        : isDark 
+        : darkMode 
           ? 'bg-gray-900/80 backdrop-blur-md' 
           : 'bg-white/80 backdrop-blur-md'
     }`}>
@@ -144,7 +144,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
             <div className="hidden lg:flex items-center space-x-8">
               {['Home', 'Products', 'Categories', 'About'].map((item) => (
                 <a key={item} href="#" className={`relative font-semibold transition-all duration-300 group ${
-                  isDark ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-blue-600'
+                  darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-blue-600'
                 }`}>
                   {item}
                   <span className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-500 rounded-full"></span>
@@ -160,13 +160,13 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
                 type="text"
                 placeholder="Search for amazing products..."
                 className={`w-full pl-12 sm:pl-14 pr-4 sm:pr-6 py-3 sm:py-4 border-2 rounded-xl sm:rounded-2xl focus:ring-4 transition-all duration-300 font-medium text-sm sm:text-base ${
-                  isDark 
+                  darkMode 
                     ? 'border-gray-700 bg-gray-800/50 text-white placeholder-gray-400 focus:ring-blue-500/30 focus:border-blue-500 hover:bg-gray-800/70'
                     : 'border-blue-200 bg-blue-50/50 text-gray-900 placeholder-gray-500 focus:ring-blue-500/30 focus:border-blue-500 hover:bg-blue-100/70'
                 }`}
               />
               <Search className={`absolute left-3 sm:left-5 top-3 sm:top-4.5 h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-300 ${
-                isDark ? 'text-gray-400 group-focus-within:text-blue-400' : 'text-blue-400 group-focus-within:text-blue-500'
+                darkMode ? 'text-gray-400 group-focus-within:text-blue-400' : 'text-blue-400 group-focus-within:text-blue-500'
               }`} />
             </div>
           </div>
@@ -177,18 +177,18 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
             <button
               onClick={toggleTheme}
               className={`p-2 sm:p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
-                isDark 
+                darkMode 
                   ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
                   : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
               }`}
             >
-              {isDark ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
+              {darkMode ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
 
             {user ? (
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <div className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-4 py-1 sm:py-2 rounded-xl transition-all duration-300 ${
-                  isDark 
+                  darkMode 
                     ? 'bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-800/50' 
                     : 'bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200'
                 }`}>
@@ -197,14 +197,14 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </span>
                   </div>
-                  <span className={`font-semibold text-xs sm:text-base hidden sm:block ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                  <span className={`font-semibold text-xs sm:text-base hidden sm:block ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     {user.name}
                   </span>
                 </div>
                 <button
                   onClick={onLogout}
                   className={`p-2 sm:p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
-                    isDark 
+                    darkMode 
                       ? 'text-gray-400 hover:text-red-400 hover:bg-red-900/20' 
                       : 'text-gray-600 hover:text-red-500 hover:bg-red-50'
                   }`}
@@ -217,7 +217,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
               <button
                 onClick={onLoginClick}
                 className={`flex items-center space-x-1 sm:space-x-2 font-semibold transition-all duration-300 px-2 sm:px-4 py-2 sm:py-3 rounded-xl hover:scale-105 text-xs sm:text-base ${
-                  isDark 
+                  darkMode 
                     ? 'text-gray-300 hover:text-white bg-gray-800/50 hover:bg-gray-700/50' 
                     : 'text-gray-700 hover:text-blue-600 bg-blue-100/50 hover:bg-blue-200/50'
                 }`}
@@ -228,7 +228,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
             )}
             
             <button className={`p-2 sm:p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
-              isDark 
+              darkMode 
                 ? 'text-gray-400 hover:text-red-400 hover:bg-red-900/20' 
                 : 'text-gray-600 hover:text-red-500 hover:bg-red-50'
             }`}>
@@ -238,7 +238,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
             <button
               onClick={onCartClick}
               className={`relative p-2 sm:p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
-                isDark 
+                darkMode 
                   ? 'text-gray-400 hover:text-blue-400 hover:bg-blue-900/20' 
                   : 'text-gray-600 hover:text-blue-500 hover:bg-blue-50'
               }`}
@@ -255,7 +255,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`lg:hidden p-2 sm:p-3 rounded-xl transition-all duration-300 ${
-                isDark 
+                darkMode 
                   ? 'text-gray-400 hover:text-white hover:bg-gray-800/50' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-blue-100/50'
               }`}
@@ -268,11 +268,11 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className={`lg:hidden border-t mt-4 pt-4 pb-6 space-y-4 ${
-            isDark ? 'border-gray-800' : 'border-blue-200'
+            darkMode ? 'border-gray-800' : 'border-blue-200'
           }`}>
             {['Home', 'Products', 'Categories', 'About'].map((item) => (
               <a key={item} href="#" className={`block font-semibold py-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-blue-600'
+                darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-blue-600'
               }`}>
                 {item}
               </a>
@@ -282,7 +282,7 @@ const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
                 type="text"
                 placeholder="Search products..."
                 className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-300 ${
-                  isDark 
+                  darkMode 
                     ? 'border-gray-700 bg-gray-800/50 text-white placeholder-gray-400' 
                     : 'border-blue-200 bg-blue-50 text-gray-900 placeholder-gray-500'
                 }`}
@@ -302,7 +302,7 @@ const Product = ({ product, onAddToCart }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
-  const { isDark } = useTheme();
+  const { darkMode } = useTheme();
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -337,7 +337,7 @@ const Product = ({ product, onAddToCart }) => {
 
   return (
     <div className={`min-h-screen pt-20 sm:pt-24 pb-8 sm:pb-16 transition-colors duration-300 ${
-  isDark ? 'bg-gray-900' : 'bg-white'
+  darkMode ? 'bg-gray-900' : 'bg-white'
 }`}>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -409,12 +409,12 @@ const Product = ({ product, onAddToCart }) => {
             <div className="space-y-3 sm:space-y-4">
               <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 uppercase tracking-widest font-bold">{product.brand}</p>
               <h1 className={`text-2xl sm:text-3xl xl:text-5xl font-black leading-tight ${
-                isDark ? 'text-white' : 'text-gray-900'
+                darkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 {product.name}
               </h1>
               <p className={`text-base sm:text-lg leading-relaxed ${
-                isDark ? 'text-gray-300' : 'text-gray-600'
+                darkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
                 {product.description}
               </p>
@@ -429,30 +429,30 @@ const Product = ({ product, onAddToCart }) => {
                     className={`h-4 w-4 sm:h-6 sm:w-6 ${
                       i < Math.floor(product.rating) 
                         ? 'text-yellow-400 fill-current' 
-                        : isDark ? 'text-gray-600' : 'text-gray-300'
+                        : darkMode ? 'text-gray-600' : 'text-gray-300'
                     }`}
                   />
                 ))}
               </div>
-              <span className={`text-lg sm:text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <span className={`text-lg sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 {product.rating}
               </span>
-              <span className={`text-sm sm:text-base ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <span className={`text-sm sm:text-base ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 ({product.reviews} reviews)
               </span>
             </div>
 
             {/* Price */}
             <div className={`p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg ${
-              isDark 
+              darkMode 
                 ? 'bg-gradient-to-r from-green-900/30 to-blue-900/30 border border-green-800/30' 
                 : 'bg-gradient-to-r from-green-50 to-blue-50 border border-green-200'
             }`}>
               <div className="flex items-center space-x-3 sm:space-x-6 flex-wrap">
-                <span className={`text-3xl sm:text-5xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-3xl sm:text-5xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{product.price}
                 </span>
-                <span className={`text-lg sm:text-2xl line-through ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                <span className={`text-lg sm:text-2xl line-through ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                   ₹{product.originalPrice}
                 </span>
                 <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-lg font-bold animate-pulse shadow-lg">
@@ -460,7 +460,7 @@ const Product = ({ product, onAddToCart }) => {
                 </span>
               </div>
               <p className={`mt-3 sm:mt-4 text-base sm:text-lg font-semibold ${
-                isDark ? 'text-green-400' : 'text-green-600'
+                darkMode ? 'text-green-400' : 'text-green-600'
               }`}>
                 You save ₹{product.originalPrice - product.price}!
               </p>
@@ -468,7 +468,7 @@ const Product = ({ product, onAddToCart }) => {
 
             {/* Colors */}
             <div className="space-y-4 sm:space-y-6">
-              <h3 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-xl sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Choose Color
               </h3>
               <div className="flex space-x-3 sm:space-x-4">
@@ -496,7 +496,7 @@ const Product = ({ product, onAddToCart }) => {
                 ))}
               </div>
               {selectedColor && (
-                <p className={`font-semibold text-base sm:text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                <p className={`font-semibold text-base sm:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Selected: {selectedColor.name}
                 </p>
               )}
@@ -504,7 +504,7 @@ const Product = ({ product, onAddToCart }) => {
 
             {/* Sizes */}
             <div className="space-y-4 sm:space-y-6">
-              <h3 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-xl sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Select Size
               </h3>
               <div className="flex flex-wrap gap-2 sm:gap-4">
@@ -513,10 +513,10 @@ const Product = ({ product, onAddToCart }) => {
                     key={size}
                     className={`px-4 sm:px-8 py-2 sm:py-4 border-2 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover:scale-105 shadow-md ${
                       selectedSize === size
-                        ? isDark
+                        ? darkMode
                           ? 'border-blue-500 bg-gradient-to-r from-blue-900/50 to-purple-900/50 text-blue-400 shadow-xl'
                           : 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 shadow-xl'
-                        : isDark
+                        : darkMode
                           ? 'border-gray-600 hover:border-gray-500 text-gray-300 hover:bg-gray-800/50'
                           : 'border-blue-300 hover:border-blue-400 text-gray-700 hover:bg-blue-50'
                     }`}
@@ -542,7 +542,7 @@ const Product = ({ product, onAddToCart }) => {
             </div>
 
             {/* Product Info Tabs */}
-            <div className={`border-t pt-8 ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
+            <div className={`border-t pt-8 ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
               <div className="flex space-x-8 mb-6">
                 {['description', 'specifications', 'features'].map((tab) => (
                   <button
@@ -551,7 +551,7 @@ const Product = ({ product, onAddToCart }) => {
                     className={`pb-2 px-1 border-b-2 font-semibold text-lg capitalize transition-all duration-300 ${
                       activeTab === tab
                         ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                        : isDark
+                        : darkMode
                           ? 'border-transparent text-gray-400 hover:text-gray-200'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
@@ -562,14 +562,14 @@ const Product = ({ product, onAddToCart }) => {
               </div>
 
               <div className={`p-6 rounded-2xl shadow-lg ${
-                isDark ? 'bg-gray-800/50' : 'bg-gray-50'
+                darkMode ? 'bg-gray-800/50' : 'bg-gray-50'
               }`}>
                 {activeTab === 'description' && (
                   <div className="space-y-4">
-                    <h4 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <h4 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       Product Description
                     </h4>
-                    <p className={`text-lg leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <p className={`text-lg leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                       {product.description} This premium quality shirt is crafted with attention to detail and designed for modern lifestyle. Perfect for both casual and semi-formal occasions.
                     </p>
                   </div>
@@ -577,16 +577,16 @@ const Product = ({ product, onAddToCart }) => {
 
                 {activeTab === 'specifications' && (
                   <div className="space-y-4">
-                    <h4 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <h4 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       Specifications
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries(product.specifications).map(([key, value]) => (
                         <div key={key} className="flex justify-between">
-                          <span className={`font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <span className={`font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                             {key}:
                           </span>
-                          <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                          <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
                             {value}
                           </span>
                         </div>
@@ -604,7 +604,7 @@ const Product = ({ product, onAddToCart }) => {
                       {product.features.map((feature, index) => (
                         <div key={index} className="flex items-center space-x-3">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <span className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <span className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                             {feature}
                           </span>
                         </div>
@@ -625,12 +625,12 @@ const Product = ({ product, onAddToCart }) => {
       {showValidationModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className={`max-w-md w-full p-8 rounded-3xl shadow-2xl ${
-            isDark ? 'bg-gray-800' : 'bg-white'
+            darkMode ? 'bg-gray-800' : 'bg-white'
           }`}>
-            <h3 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               Selection Required
             </h3>
-            <p className={`mb-6 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`mb-6 text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Please select both color and size before adding to cart.
             </p>
             <button
@@ -649,7 +649,7 @@ const Product = ({ product, onAddToCart }) => {
 // Similar Products Component with Pagination
 const SimilarProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { isDark } = useTheme();
+  const { darkMode } = useTheme();
   const productsPerPage = 4;
   const totalPages = Math.ceil(similarProducts.length / productsPerPage);
 
@@ -662,7 +662,7 @@ const SimilarProducts = () => {
   return (
     <div className="mt-20">
       <div className="flex items-center justify-between mb-12">
-        <h2 className={`text-4xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+        <h2 className={`text-4xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
           Similar Products
         </h2>
         <div className="flex items-center space-x-4">
@@ -671,13 +671,13 @@ const SimilarProducts = () => {
             disabled={currentPage === 1}
             className={`p-3 rounded-xl transition-all duration-300 ${
               currentPage === 1
-                ? isDark ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
-                : isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? darkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
+                : darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
             }`}
           >
             <ArrowLeft className="h-6 w-6" />
           </button>
-          <span className={`text-lg font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          <span className={`text-lg font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             {currentPage} of {totalPages}
           </span>
           <button
@@ -685,8 +685,8 @@ const SimilarProducts = () => {
             disabled={currentPage === totalPages}
             className={`p-3 rounded-xl transition-all duration-300 ${
               currentPage === totalPages
-                ? isDark ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
-                : isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? darkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
+                : darkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
             }`}
           >
             <ArrowRight className="h-6 w-6" />
@@ -697,7 +697,7 @@ const SimilarProducts = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {getCurrentProducts().map((product) => (
           <div key={product.id} className={`group cursor-pointer transform hover:scale-105 transition-all duration-500 ${
-            isDark ? 'bg-gray-800/50' : 'bg-white'
+            darkMode ? 'bg-gray-800/50' : 'bg-white'
           } rounded-3xl shadow-lg hover:shadow-2xl p-6`}>
             <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-2xl overflow-hidden mb-6 relative">
               <img
@@ -711,7 +711,7 @@ const SimilarProducts = () => {
             </div>
             <div className="space-y-3">
               <p className="text-sm text-blue-600 dark:text-blue-400 font-semibold">{product.brand}</p>
-              <h3 className={`font-bold text-lg leading-tight line-clamp-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`font-bold text-lg leading-tight line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 {product.name}
               </h3>
               <div className="flex items-center space-x-2">
@@ -722,20 +722,20 @@ const SimilarProducts = () => {
                       className={`h-4 w-4 ${
                         i < Math.floor(product.rating) 
                           ? 'text-yellow-400 fill-current' 
-                          : isDark ? 'text-gray-600' : 'text-gray-300'
+                          : darkMode ? 'text-gray-600' : 'text-gray-300'
                       }`}
                     />
                   ))}
                 </div>
-                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   ({product.reviews})
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{product.price}
                 </span>
-                <span className={`line-through ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                <span className={`line-through ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                   ₹{product.originalPrice}
                 </span>
               </div>
@@ -752,7 +752,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
-  const { isDark } = useTheme();
+  const { darkMode } = useTheme();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -769,13 +769,13 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className={`max-w-md w-full p-8 rounded-3xl shadow-2xl transform transition-all duration-300 ${
-        isDark ? 'bg-gray-800' : 'bg-white'
+        darkMode ? 'bg-gray-800' : 'bg-white'
       }`}>
         <div className="text-center mb-8">
-          <h2 className={`text-3xl font-black mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`text-3xl font-black mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
             {isRegistering ? 'Create Account' : 'Welcome Back'}
           </h2>
-          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             {isRegistering ? 'Join our shopping community' : 'Sign in to your account'}
           </p>
         </div>
@@ -783,7 +783,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
         <div className="space-y-6">
           <div className="space-y-4">
             <div className="relative">
-              <User className={`absolute left-4 top-4 h-5 w-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
+              <User className={`absolute left-4 top-4 h-5 w-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
               <input
                 type="text"
                 placeholder="Full Name"
@@ -791,14 +791,14 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 onChange={(e) => setName(e.target.value)}
                 required
                 className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl transition-all duration-300 font-medium ${
-                  isDark 
+                  darkMode 
                     ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                     : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                 }`}
               />
             </div>
             <div className="relative">
-              <Mail className={`absolute left-4 top-4 h-5 w-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
+              <Mail className={`absolute left-4 top-4 h-5 w-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
               <input
                 type="email"
                 placeholder="Email Address"
@@ -806,7 +806,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl transition-all duration-300 font-medium ${
-                  isDark 
+                  darkMode 
                     ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                     : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                 }`}
@@ -826,7 +826,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
           <button
             onClick={() => setIsRegistering(!isRegistering)}
             className={`font-semibold hover:underline transition-colors duration-300 ${
-              isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+              darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
             }`}
           >
             {isRegistering ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
@@ -836,7 +836,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
         <button
           onClick={onClose}
           className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-300 ${
-            isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+            darkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
           }`}
         >
           <X className="h-5 w-5" />
@@ -848,7 +848,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
 // Enhanced Cart Component
 const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) => {
-  const { isDark } = useTheme();
+  const { darkMode } = useTheme();
   
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal > 500 ? 0 : 50;
@@ -859,18 +859,18 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className={`max-w-4xl w-full max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl ${
-        isDark ? 'bg-gray-800' : 'bg-white'
+        darkMode ? 'bg-gray-800' : 'bg-white'
       }`}>
         <div className={`p-6 border-b flex items-center justify-between ${
-          isDark ? 'border-gray-700' : 'border-gray-200'
+          darkMode ? 'border-gray-700' : 'border-gray-200'
         }`}>
-          <h2 className={`text-3xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`text-3xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
             Shopping Cart ({cartItems.length})
           </h2>
           <button
             onClick={onClose}
             className={`p-3 rounded-full transition-all duration-300 hover:scale-110 ${
-              isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+              darkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
             }`}
           >
             <X className="h-6 w-6" />
@@ -880,11 +880,11 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
         <div className="flex-1 overflow-y-auto max-h-96 p-6">
           {cartItems.length === 0 ? (
             <div className="text-center py-16">
-              <ShoppingCart className={`h-24 w-24 mx-auto mb-6 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
-              <h3 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <ShoppingCart className={`h-24 w-24 mx-auto mb-6 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+              <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Your cart is empty
               </h3>
-              <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-lg ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 Add some amazing products to get started!
               </p>
             </div>
@@ -893,7 +893,7 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
               {cartItems.map((item) => (
                 <div key={`${item.id}-${item.selectedColor?.name}-${item.selectedSize}`} 
                      className={`flex items-center space-x-6 p-6 rounded-2xl transition-all duration-300 ${
-                       isDark ? 'bg-gray-700/50 hover:bg-gray-700/70' : 'bg-gray-50 hover:bg-gray-100'
+                       darkMode ? 'bg-gray-700/50 hover:bg-gray-700/70' : 'bg-gray-50 hover:bg-gray-100'
                      }`}>
                   <div className="w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded-xl overflow-hidden">
                     <img
@@ -904,17 +904,17 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
                   </div>
                   
                   <div className="flex-1">
-                    <h3 className={`font-bold text-lg mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={`font-bold text-lg mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       {item.name}
                     </h3>
-                    <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p className={`text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       {item.brand}
                     </p>
                     <div className="flex items-center space-x-4">
-                      <span className={`font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <span className={`font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         Color: {item.selectedColor?.name}
                       </span>
-                      <span className={`font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <span className={`font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         Size: {item.selectedSize}
                       </span>
                     </div>
@@ -925,18 +925,18 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
                       <button
                         onClick={() => onUpdateQuantity(item.id, item.selectedColor?.name, item.selectedSize, Math.max(1, item.quantity - 1))}
                         className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                          isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                          darkMode ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                         }`}
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className={`text-xl font-bold min-w-[3rem] text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <span className={`text-xl font-bold min-w-[3rem] text-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => onUpdateQuantity(item.id, item.selectedColor?.name, item.selectedSize, item.quantity + 1)}
                         className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                          isDark ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                          darkMode ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                         }`}
                       >
                         <Plus className="h-4 w-4" />
@@ -944,7 +944,7 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
                     </div>
 
                     <div className="text-right min-w-[5rem]">
-                      <p className={`text-2xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         ₹{item.price * item.quantity}
                       </p>
                     </div>
@@ -963,35 +963,35 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) =>
         </div>
 
         {cartItems.length > 0 && (
-          <div className={`p-6 border-t space-y-6 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className={`p-6 border-t space-y-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className={`text-lg font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                <span className={`text-lg font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Subtotal:
                 </span>
-                <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{subtotal}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className={`text-lg font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                <span className={`text-lg font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Shipping:
                 </span>
                 <span className={`text-xl font-bold ${
                   shipping === 0 
                     ? 'text-green-500' 
-                    : isDark ? 'text-white' : 'text-gray-900'
+                    : darkMode ? 'text-white' : 'text-gray-900'
                 }`}>
                   {shipping === 0 ? 'FREE' : `₹${shipping}`}
                 </span>
               </div>
               <div className={`flex justify-between items-center pt-3 border-t ${
-                isDark ? 'border-gray-700' : 'border-gray-200'
+                darkMode ? 'border-gray-700' : 'border-gray-200'
               }`}>
-                <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   Total:
                 </span>
-                <span className={`text-3xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-3xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   ₹{total}
                 </span>
               </div>
