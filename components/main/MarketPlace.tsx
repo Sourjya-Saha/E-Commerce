@@ -1248,23 +1248,40 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => 
 };
 
 
-
+interface ColorOption {
+  name: string;          // e.g. "Red", "Blue"
+  images: string[];      // array of image URLs for that color
+  // add other color-specific fields if needed
+}
 interface CartItem {
   id: string;
   name: string;
+  brand: string;    
   price: number;
   quantity: number;
-  selectedColor?: ColorOption | null;
-  selectedSize?: string | null;
+  selectedColor?: ColorOption ;
+  selectedSize: string | undefined
+
 }
 
 interface CartProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onUpdateQuantity: (id: string, quantity: number) => void;
-  onRemoveItem: (id: string) => void;
+  onUpdateQuantity: (
+    id: string,
+    selectedColorName: string | undefined,
+    selectedSize: string | undefined,
+    quantity: number
+  ) => void;
+  onRemoveItem: (
+    id: string,
+    selectedColorName?: string,
+    selectedSize?: string
+  ) => void;
+  
 }
+
 
 const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) => {
   const { darkMode } = useTheme();
@@ -1343,7 +1360,14 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, onUpdateQuantit
             {/* Quantity control */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => onUpdateQuantity(item.id, item.selectedColor?.name, item.selectedSize, Math.max(1, item.quantity - 1))}
+                 onClick={() =>
+                  onUpdateQuantity(
+                    item.id,
+                    item.selectedColor?.name,
+                    item.selectedSize,
+                    Math.max(1, item.quantity - 1)
+                  )
+                }
                 className={`p-1 rounded-full ${
                   darkMode ? 'bg-gray-600 text-white' : 'bg-gray-300 text-gray-800'
                 } hover:scale-110 transition`}
