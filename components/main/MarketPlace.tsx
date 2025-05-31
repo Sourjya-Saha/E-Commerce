@@ -141,8 +141,15 @@ const tabOptions = [
   { key: 'features', label: 'Features', icon: <ListIcon className="w-5 h-5 mr-2" /> },
   
 ];
+interface Review {
+  id: number;
+  user: string;
+  avatar: string;
+  rating: number;
+  comment: string;
+}
 
-const staticReviews = [
+const staticReviews: Review[] = [
   {
     id: 1,
     user: "Alice",
@@ -189,18 +196,18 @@ interface Review {
 }
 
 interface LeaveReviewProps {
-  isDark: boolean;
+  darkMode: boolean;
   onSubmitReview: (review: Review) => void;
 }
 
-const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
+const LeaveReview = ({ darkMode, onSubmitReview }: LeaveReviewProps) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
 
-  const cardBg = isDark ? "bg-gray-800" : "bg-white";
-  const textClass = isDark ? "text-white" : "text-gray-900";
-  const borderColor = isDark ? "border-indigo-400" : "border-black";
+  const cardBg = darkMode ? "bg-gray-800" : "bg-white";
+  const textClass = darkMode ? "text-white" : "text-gray-900";
+  const borderColor = darkMode ? "border-indigo-400" : "border-black";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -270,21 +277,21 @@ const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
 const REVIEWS_PER_PAGE = 3;
 
 const Reviews = () => {
-  const { darkMode } = useTheme();
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Load reviews from local storage
+  const { darkMode } = useTheme();
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("userReviews") ?? "[]") || [];
+    const saved = JSON.parse(localStorage.getItem("userReviews") ?? "[]") as Review[];
     setReviews([...staticReviews, ...saved]);
   }, []);
-  
-  const addReview = (newReview) => {
-    const updatedUserReviews = [...(JSON.parse(localStorage.getItem("userReviews") ?? "[]")), newReview];
+
+  const addReview = (newReview: Review) => {
+    const updatedUserReviews = [...(JSON.parse(localStorage.getItem("userReviews") ?? "[]") as Review[]), newReview];
     localStorage.setItem("userReviews", JSON.stringify(updatedUserReviews));
     setReviews((prev) => [...prev, newReview]);
   };
+
+ 
   
 
   const totalPages = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
@@ -311,7 +318,7 @@ const Reviews = () => {
             <img src={avatar} alt={user} className={`w-14 h-14 rounded-full border-2 ${borderColor}`} />
             <div className="flex flex-col flex-1">
               <h3 className={`text-lg font-bold ${darkMode ? "text-indigo-400" : "text-black"}`}>{user}</h3>
-              <StarRating rating={rating} darkMode={darkMode} />
+              <StarRating rating={rating}  />
               <p className={`mt-3 text-sm leading-relaxed ${textSecondaryClass}`}>{comment}</p>
             </div>
           </div>
@@ -369,8 +376,11 @@ const Reviews = () => {
   );
 };
 
+interface StarRatingProps {
+  rating: number;
+}
 
-const StarRating = ({ rating }) => {
+const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
   return (
     <div className="flex space-x-1 text-yellow-400 mt-1">
       {[...Array(5)].map((_, i) => (
@@ -400,9 +410,16 @@ const similarProducts = [
   { id: 8, name: "Men Slim Fit Self Design Casual Shirt", brand: "URBANIC", price: 325, originalPrice: 1899, discount: 82, image: '/assets/pic10.png', rating: 4.1, reviews: 145 },
   { id: 9, name: "Men Regular Fit Floral Print Casual Shirt", brand: "BOHOMART", price: 375, originalPrice: 1999, discount: 81, image: '/assets/pic14.png', rating: 4.3, reviews: 87 }
 ];
+interface NavbarProps {
+  cartCount: number;
+  onCartClick: () => void;
+  onLoginClick: () => void;
+  user: { name: string } | null; // or your user type
+  onLogout: () => void;
+}
 
 // Navbar Component
-const Navbar = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
+const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick, onLoginClick, user, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
