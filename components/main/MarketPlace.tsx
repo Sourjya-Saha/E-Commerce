@@ -34,23 +34,31 @@ const useTheme = () => {
 };
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [darkMode, setDarkMode] = useState(() => {
-    try {
-      const saved = window.localStorage?.getItem('theme');
-      return saved ? saved === 'dark' : false;
-    } catch {
-      return false;
-    }
-  });
-  
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Read from localStorage on client-side
   useEffect(() => {
     try {
-      window.localStorage?.setItem('theme', darkMode ? 'dark' : 'light');
-    } catch {}
+      const saved = window.localStorage.getItem('theme');
+      if (saved) {
+        setDarkMode(saved === 'dark');
+      }
+    } catch {
+      // fallback: keep darkMode as false
+    }
+  }, []);
+
+  // Write to localStorage when darkMode changes
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    } catch {
+      // silently fail (e.g., private browsing)
+    }
   }, [darkMode]);
-  
-  const toggleTheme = () => setDarkMode(!darkMode);
-  
+
+  const toggleTheme = () => setDarkMode((prev) => !prev);
+
   return (
     <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
       <div className={darkMode ? 'dark' : ''}>
@@ -58,8 +66,8 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
       </div>
     </ThemeContext.Provider>
   );
-  
 };
+
 
 
 // Enhanced Mock Data with multiple images per color
@@ -1470,25 +1478,32 @@ interface CartItem extends Product {
 // Main App Component
 const App = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('cartItems');
-    if (saved) {
-      setCartItems(JSON.parse(saved));
-    }
-  }, []);
-  
   const [showCart, setShowCart] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState<any>(null); // update type as needed
 
+  // Load cart items from localStorage
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart));
+    }
+  }, []);
+
+  // Load user from localStorage
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  // Save cart items to localStorage on change
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Save/remove user in localStorage on change
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
