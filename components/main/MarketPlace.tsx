@@ -276,16 +276,16 @@ const Reviews = () => {
 
   // Load reviews from local storage
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("userReviews")) || [];
+    const saved = JSON.parse(localStorage.getItem("userReviews") ?? "[]") || [];
     setReviews([...staticReviews, ...saved]);
   }, []);
-
-  // Save to local storage when new reviews added
+  
   const addReview = (newReview) => {
-    const updatedUserReviews = [...(JSON.parse(localStorage.getItem("userReviews")) || []), newReview];
+    const updatedUserReviews = [...(JSON.parse(localStorage.getItem("userReviews") ?? "[]")), newReview];
     localStorage.setItem("userReviews", JSON.stringify(updatedUserReviews));
     setReviews((prev) => [...prev, newReview]);
   };
+  
 
   const totalPages = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
   const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
