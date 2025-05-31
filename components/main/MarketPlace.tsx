@@ -1469,10 +1469,14 @@ interface CartItem extends Product {
 
 // Main App Component
 const App = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
     const saved = localStorage.getItem('cartItems');
-    return saved ? JSON.parse(saved) : [];
-  });
+    if (saved) {
+      setCartItems(JSON.parse(saved));
+    }
+  }, []);
   
   const [showCart, setShowCart] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
