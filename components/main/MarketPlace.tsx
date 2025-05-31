@@ -616,7 +616,8 @@ interface Product {
   originalPrice?: number;   // original price (optional)
   discount?: number;
   rating?: number;          // e.g. 4.5
-  reviews?: number;       // array of reviews
+  reviews?: number;  
+  quantity?: number;     // array of reviews
   description?: string;
   imageUrl: string;
   colors: ColorOption[];
@@ -631,7 +632,9 @@ interface CartProduct extends Product {
   quantity: number;
 }
 
-
+interface CartItem extends Product {
+  quantity: number; // must exist in cart item
+}
 interface ProductProps {
   product: Product;
   onAddToCart: (product: CartProduct) => void;
@@ -1441,10 +1444,23 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, onUpdateQuantit
 
   );
 };
+interface ColorOption {
+  name: string;
+  images: string[];
+}
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  quantity?: number;
+  selectedColor?: ColorOption | null;
+  selectedSize?: string | null;
+}
 
 // Main App Component
 const App = () => {
-  const [cartItems, setCartItems] = useState(() => {
+  const [cartItems, setCartItems] = useState<Product[]>(() => {
     const saved = localStorage.getItem('cartItems');
     return saved ? JSON.parse(saved) : [];
   });
@@ -1467,23 +1483,29 @@ const App = () => {
     }
   }, [user]);
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (product: Product) => {
     const existingItemIndex = cartItems.findIndex(
-      item => item.id === product.id && 
-               item.selectedColor?.name === product.selectedColor?.name && 
-               item.selectedSize === product.selectedSize
+      item => 
+        item.id === product.id &&
+        item.selectedColor?.name === product.selectedColor?.name &&
+        item.selectedSize === product.selectedSize
     );
-
+  
     if (existingItemIndex >= 0) {
       const updatedItems = [...cartItems];
-      updatedItems[existingItemIndex].quantity += 1;
+      updatedItems[existingItemIndex].quantity! += 1; // quantity assumed to exist here
       setCartItems(updatedItems);
     } else {
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
   };
-
-  const handleUpdateQuantity = (id, colorName, size, newQuantity) => {
+  
+  const handleUpdateQuantity = (
+    id: string,
+    colorName: string | undefined,
+    size: string | undefined,
+    newQuantity: number
+  ) => {
     if (newQuantity === 0) {
       handleRemoveItem(id, colorName, size);
       return;
@@ -1497,8 +1519,11 @@ const App = () => {
         : item
     ));
   };
-
-  const handleRemoveItem = (id, colorName, size) => {
+  const handleRemoveItem = (
+    id: string,
+    colorName: string | undefined,
+    size: string | undefined
+  ) => {
     setCartItems(cartItems.filter(item => 
       !(item.id === id && 
         item.selectedColor?.name === colorName && 
@@ -1506,7 +1531,12 @@ const App = () => {
     ));
   };
 
-  const handleLogin = (userData) => {
+  interface UserData {
+    name: string;
+    email: string;
+  }
+
+  const handleLogin = (userData: UserData) => {
     setUser(userData);
   };
 
@@ -1516,6 +1546,7 @@ const App = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('cartItems');
   };
+  
   const Footer = () => {
     const { darkMode } = useTheme();
   
