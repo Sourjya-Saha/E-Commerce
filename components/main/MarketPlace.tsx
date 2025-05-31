@@ -34,7 +34,7 @@ const useTheme = () => {
 };
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [isDark, setIsDark] = useState(() => {
+  const [darkMode, setDarkMode] = useState(() => {
     try {
       const saved = window.localStorage?.getItem('theme');
       return saved ? saved === 'dark' : false;
@@ -42,27 +42,23 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
       return false;
     }
   });
-  interface ThemeContextType {
-    isDark: boolean;
-    toggleTheme: () => void;
-  }
+  
   useEffect(() => {
     try {
-      window.localStorage?.setItem('theme', isDark ? 'dark' : 'light');
-    } catch {
-      // Handle localStorage not available
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => setIsDark(!isDark);
-
+      window.localStorage?.setItem('theme', darkMode ? 'dark' : 'light');
+    } catch {}
+  }, [darkMode]);
+  
+  const toggleTheme = () => setDarkMode(!darkMode);
+  
   return (
-     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-      <div className={isDark ? 'dark' : ''}>
+    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
+      <div className={darkMode ? 'dark' : ''}>
         {children}
       </div>
     </ThemeContext.Provider>
   );
+  
 };
 
 // Enhanced Mock Data with multiple images per color
