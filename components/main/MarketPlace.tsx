@@ -1457,18 +1457,23 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  quantity?: number;
   selectedColor?: ColorOption | null;
   selectedSize?: string | null;
 }
 
+interface CartItem extends Product {
+  quantity: number; // mandatory for CartItem
+}
+
+
 
 // Main App Component
 const App = () => {
-  const [cartItems, setCartItems] = useState<Product[]>(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cartItems');
     return saved ? JSON.parse(saved) : [];
   });
+  
   const [showCart, setShowCart] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(() => {
@@ -1498,12 +1503,14 @@ const App = () => {
   
     if (existingItemIndex >= 0) {
       const updatedItems = [...cartItems];
-      updatedItems[existingItemIndex].quantity! += 1; // quantity assumed to exist here
+      updatedItems[existingItemIndex].quantity += 1; // safe now, quantity is mandatory
       setCartItems(updatedItems);
     } else {
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+      setCartItems([...cartItems, { ...product, quantity: 1 } as CartItem]);
+
     }
   };
+  
   
   const handleUpdateQuantity = (
     id: string,
