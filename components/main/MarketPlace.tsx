@@ -22,7 +22,7 @@ interface ThemeProviderProps {
 }
 
 
-const ThemeContext = createContext<ThemeContextType>(defaultValue);
+
 
 
 const useTheme = () => {
@@ -32,7 +32,24 @@ const useTheme = () => {
   }
   return context;
 };
+interface ThemeContextType {
+  isDark: boolean;
+  toggleTheme: () => void;
+}
 
+interface ThemeContextType {
+  isDark: boolean;
+  toggleTheme: () => void;
+}
+
+export const ThemeContext = createContext<ThemeContextType>({
+  isDark: false,
+  toggleTheme: () => {},
+});
+
+interface ThemeProviderProps {
+  children: ReactNode;
+}
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [isDark, setIsDark] = useState(() => {
     try {
@@ -57,7 +74,7 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const toggleTheme = () => setIsDark(!isDark);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       <div className={isDark ? 'dark' : ''}>
         {children}
       </div>
