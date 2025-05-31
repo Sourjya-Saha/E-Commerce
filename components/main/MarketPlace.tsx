@@ -179,9 +179,17 @@ const staticReviews = [
   },
 ];
 
+interface Review {
+  id: number;
+  user: string;
+  avatar: string;
+  rating: number;
+  comment: string;
+}
+
 interface LeaveReviewProps {
   isDark: boolean;
-  onSubmitReview: (reviewText: string) => void;
+  onSubmitReview: (review: Review) => void;
 }
 
 const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
@@ -192,21 +200,10 @@ const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
   const cardBg = isDark ? "bg-gray-800" : "bg-white";
   const textClass = isDark ? "text-white" : "text-gray-900";
   const borderColor = isDark ? "border-indigo-400" : "border-black";
-  interface Review {
-    id: number;
-    user: string;
-    avatar: string;
-    rating: number;
-    comment: string;
-  }
-  
-  interface LeaveReviewProps {
-    isDark: boolean;
-    onSubmitReview: (review: Review) => void;
-  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newReview = {
+    const newReview: Review = {
       id: Date.now(),
       user: "You",
       avatar: "https://i.pravatar.cc/40",
@@ -214,10 +211,9 @@ const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
       comment,
     };
     onSubmitReview(newReview);
-    setRating(0);
+    setRating(0); 
     setComment("");
   };
-  
 
   return (
     <form
