@@ -602,20 +602,55 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick, onLoginClick, u
     </nav>
   );
 };
-
+interface ColorOption {
+  name: string;          // e.g. "Red", "Blue"
+  images: string[];      // array of image URLs for that color
+  // add other color-specific fields if needed
+}
 // Enhanced Product Component
-const Product = ({ product, onAddToCart }) => {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = useState(null);
+interface Product {
+  id: string;
+  name: string;
+  brand?: string;           // add brand
+  price: number;
+  originalPrice?: number;   // original price (optional)
+  discount?: number;
+  rating?: number;          // e.g. 4.5
+  reviews?: number;       // array of reviews
+  description?: string;
+  imageUrl: string;
+  colors: ColorOption[];
+  sizes: string[];
+  specifications: { [key: string]: string } | string; // If it's an object of key-value pairs or just a string
+  features: string[]; 
+  offers?: string[]; 
+}
+interface CartProduct extends Product {
+  selectedColor: ColorOption;  // or whatever type selectedColor has
+  selectedSize: string | null; // or a suitable type
+  quantity: number;
+}
+
+
+interface ProductProps {
+  product: Product;
+  onAddToCart: (product: CartProduct) => void;
+}
+
+const Product: React.FC<ProductProps> = ({ product, onAddToCart }) => {
+  const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0]);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const { darkMode } = useTheme();
 
-  const handleColorSelect = (color) => {
+  const handleColorSelect = (color: ColorOption) => {
     setSelectedColor(color);
     setCurrentImageIndex(0);
   };
+  
   console.log(selectedColor.images);
 
 
@@ -739,16 +774,17 @@ const Product = ({ product, onAddToCart }) => {
             {/* Rating */}
             <div className="flex items-center space-x-4 sm:space-x-6">
               <div className="flex items-center space-x-1 sm:space-x-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 sm:h-6 sm:w-6 ${
-                      i < Math.floor(product.rating) 
-                        ? 'text-yellow-400 fill-current' 
-                        : darkMode ? 'text-gray-600' : 'text-gray-300'
-                    }`}
-                  />
-                ))}
+              {[...Array(5)].map((_, i) => (
+  <Star
+    key={i}
+    className={`h-4 w-4 sm:h-6 sm:w-6 ${
+      i < Math.floor(product.rating ?? 0) // fallback to 0 if rating undefined
+        ? 'text-yellow-400 fill-current' 
+        : darkMode ? 'text-gray-600' : 'text-gray-300'
+    }`}
+  />
+))}
+
               </div>
               <span className={`text-lg sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 {product.rating}
@@ -777,8 +813,8 @@ const Product = ({ product, onAddToCart }) => {
               </div>
               <p className={`mt-3 sm:mt-4 text-base sm:text-lg font-semibold ${
                 darkMode ? 'text-green-400' : 'text-green-600'
-              }`}>
-                You save ₹{product.originalPrice - product.price}!
+              }`}>You save ₹{(product.originalPrice ?? 0) - (product.price ?? 0)}!
+
               </p>
             </div>
 
@@ -931,19 +967,20 @@ const Product = ({ product, onAddToCart }) => {
       </div>
     )}
 
-    {activeTab === 'offers' && product.offers?.length > 0 && (
-      <div className="space-y-4">
-        <h4 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Available Offers</h4>
-        <ul className="space-y-3">
-          {product.offers.map((offer, idx) => (
-            <li key={idx} className="flex items-start space-x-3">
-              <BadgePercentIcon className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-              <span className={`text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{offer}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+{activeTab === 'offers' && product.offers && product.offers.length > 0 && (
+  <div className="space-y-4">
+    <h4 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Available Offers</h4>
+    <ul className="space-y-3">
+      {product.offers.map((offer, idx) => (
+        <li key={idx} className="flex items-start space-x-3">
+          <BadgePercentIcon className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+          <span className={`text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{offer}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
     
   </div>
   <div className="block md:hidden">
@@ -1091,16 +1128,22 @@ const SimilarProducts = () => {
   );
 };
 
+interface LoginModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onLogin: (userData: { name: string; email: string }) => void;
+}
 
-// Login Modal Component
-const LoginModal = ({ isOpen, onClose, onLogin }) => {
+
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const { darkMode } = useTheme();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+  
 
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
@@ -1111,10 +1154,8 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
         email: trimmedEmail,
       };
 
-      // ✅ Store in localStorage
       localStorage.setItem("user", JSON.stringify(userData));
 
-      // ✅ Send to parent
       onLogin(userData);
 
       // Reset form
@@ -1208,8 +1249,24 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
 
 
-// Enhanced Cart Component
-const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) => {
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  selectedColor?: ColorOption | null;
+  selectedSize?: string | null;
+}
+
+interface CartProps {
+  isOpen: boolean;
+  onClose: () => void;
+  cartItems: CartItem[];
+  onUpdateQuantity: (id: string, quantity: number) => void;
+  onRemoveItem: (id: string) => void;
+}
+
+const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem }) => {
   const { darkMode } = useTheme();
   
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
