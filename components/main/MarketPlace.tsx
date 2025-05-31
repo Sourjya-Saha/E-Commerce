@@ -204,7 +204,7 @@ const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
     isDark: boolean;
     onSubmitReview: (review: Review) => void;
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newReview = {
       id: Date.now(),
@@ -217,6 +217,7 @@ const LeaveReview = ({ isDark, onSubmitReview }: LeaveReviewProps) => {
     setRating(0);
     setComment("");
   };
+  
 
   return (
     <form
