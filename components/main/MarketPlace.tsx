@@ -63,9 +63,9 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
 
 // Enhanced Mock Data with multiple images per color
-const mockProducts = [
+const mockProducts: Product[] = [
   {
-    id: 1,
+    id: "1",   // id as string to match interface
     name: "Men Regular Fit Self Design Spread Collar Casual Shirt",
     brand: "JACKBELLA",
     price: 275,
@@ -74,9 +74,9 @@ const mockProducts = [
     rating: 4.2,
     reviews: 128,
     colors: [
-      { 
-        name: 'Beige', 
-        code: '#F5F5DC', 
+      {
+        name: 'Beige',
+        code: '#F5F5DC',
         images: [
           '/assets/pic.png',
           '/assets/pic2.png',
@@ -84,29 +84,29 @@ const mockProducts = [
           '/assets/pic4.png'
         ]
       },
-      { 
-        name: 'Black', 
-        code: '#000000', 
+      {
+        name: 'Black',
+        code: '#000000',
         images: [
-         '/assets/pic5.png',
+          '/assets/pic5.png',
           '/assets/pic6.png',
           '/assets/pic7.png',
           '/assets/pic8.png'
         ]
       },
-      { 
-        name: 'Maroon', 
-        code: '#800000', 
+      {
+        name: 'Maroon',
+        code: '#800000',
         images: [
-         '/assets/pic9.png',
+          '/assets/pic9.png',
           '/assets/pic10.png',
           '/assets/pic11.png',
           '/assets/pic12.png'
         ]
       },
-      { 
-        name: 'White', 
-        code: '#111111', 
+      {
+        name: 'White',
+        code: '#111111',
         images: [
           '/assets/pic13.png',
           '/assets/pic14.png',
@@ -131,9 +131,11 @@ const mockProducts = [
       'Sleeve': 'Full Sleeve',
       'Fit': 'Regular Fit',
       'Care': 'Machine Wash'
-    }
+    },
+    imageUrl: '/assets/pic.png'   // <-- added required field here
   }
 ];
+
 const tabOptions = [
   { key: 'offers', label: 'Offers', icon: <BadgePercentIcon className="w-5 h-5 mr-2" /> },
   { key: 'description', label: 'Description', icon: <InfoIcon className="w-5 h-5 mr-2" /> },
@@ -603,10 +605,11 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick, onLoginClick, u
   );
 };
 interface ColorOption {
-  name: string;          // e.g. "Red", "Blue"
-  images: string[];      // array of image URLs for that color
-  // add other color-specific fields if needed
+  name: string;
+  code: string;    // hex code string
+  images: string[]; // array of image URLs
 }
+
 // Enhanced Product Component
 interface Product {
   id: string;
@@ -1252,10 +1255,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => 
 
 
 interface ColorOption {
-  name: string;          // e.g. "Red", "Blue"
-  images: string[];      // array of image URLs for that color
-  // add other color-specific fields if needed
+  name: string;
+  code: string;    // hex code string
+  images: string[]; // array of image URLs
 }
+
 interface CartItem {
   id: string;
   name: string;
@@ -1458,6 +1462,7 @@ interface Product {
   selectedSize?: string | null;
 }
 
+
 // Main App Component
 const App = () => {
   const [cartItems, setCartItems] = useState<Product[]>(() => {
@@ -1633,7 +1638,7 @@ const App = () => {
     <ThemeProvider>
       
         <Navbar 
-          cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+          cartCount={cartItems.reduce((sum, item) => sum + (item.quantity ?? 0), 0)}
           onCartClick={() => setShowCart(true)}
           onLoginClick={() => setShowLogin(true)}
           user={user}
